@@ -1,5 +1,7 @@
 *
 !*.py
+!models/
+!tests
 !AUTHORS
 !README.md
 !.gitignore
