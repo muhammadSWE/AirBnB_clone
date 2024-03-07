@@ -1,0 +1,5 @@
+*
+!*.py
+!AUTHORS
+!README.md
+!.gitignore
