@@ -3,6 +3,7 @@
 This module contains the code for the hbnb Console.
 '''
 from models.base_model import BaseModel
+from models.user import User
 from models import storage
 import cmd
 
@@ -14,7 +15,9 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = '(hbnb) '
     # Available classes
-    classes = {'BaseModel': BaseModel}
+    classes = {'BaseModel': BaseModel,
+               'User': User
+               }
 
     # Commands and their help information
     def do_quit(self, arg):
@@ -124,9 +127,11 @@ class HBNBCommand(cmd.Cmd):
         '''
         print("Prints all string representation of all instances.\n"
               "Usage: all\n"
-              "\tPrints the string representation of all instances of all classes\n"
+              "\tPrints the string representation of all instances"
+              " of all classes\n"
               "Usage: all <className>\n"
-              "\tPrints the string representation of all instances of <className>\n"
+              "\tPrints the string representation of all instances"
+              " of <className>\n"
               )
 
     def do_update(self, arg):
@@ -158,11 +163,13 @@ class HBNBCommand(cmd.Cmd):
         Help information for the update command.
         '''
         print("Update an instance based on the class name and id.\n"
-              "Usage: update <className> <id> <attributeName> <attributeValue>\n"
-              "\tUpdate the attribute <attributeName> of an instance with id <id> of <className> "\
+              "Usage: update <className> <id> <attributeName>"
+              " <attributeValue>\n"
+              "\tUpdate the attribute <attributeName> of an "
+              "instance with id <id> of <className> "
               "to <attributeValue>")
 
-
+    # Non-command methods
     def emptyline(self):
         '''
         Handles empty lines.
