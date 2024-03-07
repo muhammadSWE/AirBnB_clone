@@ -16,6 +16,7 @@ class HBNBCommand(cmd.Cmd):
     # Available classes
     classes = {'BaseModel': BaseModel}
 
+    # Commands and their help information
     def do_quit(self, arg):
         '''
         Quit command to exit the program.
@@ -46,11 +47,7 @@ class HBNBCommand(cmd.Cmd):
         '''
         Create a class instance.
         '''
-        if not arg:
-            print("** class name missing **")
-            return
-        elif arg not in HBNBCommand.classes:
-            print("** class doesn't exist **")
+        if HBNBCommand.class_issue(arg):
             return
         new_instance = HBNBCommand.classes[arg]()
         new_instance.save()
@@ -67,13 +64,9 @@ class HBNBCommand(cmd.Cmd):
         '''
         Method to show an instance.
         '''
-        if not arg:
-            print("** class name missing **")
+        if HBNBCommand.class_issue(arg):
             return
         args = arg.split()
-        if args[0] not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
         if len(args) < 2:
             print("** instance id missing **")
             return
@@ -94,13 +87,9 @@ class HBNBCommand(cmd.Cmd):
         '''
         Delete an instance of a class.
         '''
-        if not arg:
-            print("** class name missing **")
+        if HBNBCommand.class_issue(arg):
             return
         args = arg.split()
-        if args[0] not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
         if len(args) < 2:
             print("** instance id missing **")
             return
@@ -122,11 +111,7 @@ class HBNBCommand(cmd.Cmd):
         '''
         Print all instances of a class.
         '''
-        if not arg:
-            print("** class name missing **")
-            return
-        if arg not in HBNBCommand.classes:
-            print("** class doesn't exist **")
+        if HBNBCommand.class_issue(arg):
             return
         objects = storage.all()
         for key in objects:
@@ -144,11 +129,59 @@ class HBNBCommand(cmd.Cmd):
               "\tPrints the string representation of all instances of <className>\n"
               )
 
+    def do_update(self, arg):
+        '''
+        Update an instance based on the class name and id.
+        '''
+        if HBNBCommand.class_issue(arg):
+            return
+        args = arg.split()
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+        key = args[0] + "." + args[1]
+        if key not in storage.all():
+            print("** no instance found **")
+            return
+        if len(args) < 3:
+            print("** attribute name missing **")
+            return
+        if len(args) < 4:
+            print("** value missing **")
+            return
+        objects = storage.all()
+        setattr(objects[key], args[2], args[3])
+        storage.save()
+
+    def help_update(self):
+        '''
+        Help information for the update command.
+        '''
+        print("Update an instance based on the class name and id.\n"
+              "Usage: update <className> <id> <attributeName> <attributeValue>\n"
+              "\tUpdate the attribute <attributeName> of an instance with id <id> of <className> "\
+              "to <attributeValue>")
+
+
     def emptyline(self):
         '''
         Handles empty lines.
         '''
         pass
+
+    @staticmethod
+    def class_issue(arg):
+        '''
+        Checks if the class argument is valid.
+        '''
+        args = arg.split()
+        if not arg:
+            print("** class name missing **")
+            return True
+        elif args[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return True
+        return False
 
 
 if __name__ == '__main__':
