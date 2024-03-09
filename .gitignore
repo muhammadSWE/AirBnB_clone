@@ -1,4 +1,5 @@
 *.pyc
+*.json
 !*.py
 !models/
 !AUTHORS
