@@ -172,7 +172,8 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         objects = storage.all()
-        objects[key].__dict__[attribute] = storage.attributes()[class_name][attribute](attr_val)
+        attribute_type = storage.attributes()[class_name][attribute]
+        objects[key].__dict__[attribute] = attribute_type(attr_val)
         objects[key].save()
 
     def help_update(self):
