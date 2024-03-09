@@ -5,6 +5,7 @@ import os
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 
+
 class TestFileStorage(unittest.TestCase):
     """ Unit tests for the FileStorage class """
 
@@ -50,14 +51,16 @@ class TestFileStorage(unittest.TestCase):
     def test_reload(self):
         """ Test the `reload` method """
         storage = FileStorage()
-        # Create a simple dictionary to save 
-        test_dict = {"BaseModel.12345": {"id": "12345", "__class__": "BaseModel"}}
+        # Create a simple dictionary to save
+        test_dict = {"BaseModel.12345":
+                     {"id": "12345", "__class__": "BaseModel"}}
         with open("file.json", "w") as f:
             json.dump(test_dict, f)
-        
+
         # Call reload
         storage.reload()
         self.assertIn("BaseModel.12345", storage.all())
+
 
 if __name__ == "__main__":
     unittest.main()
