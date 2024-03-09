@@ -19,15 +19,6 @@ class HBNBCommand(cmd.Cmd):
     '''
 
     prompt = '(hbnb) '
-    # Available classes
-    classes = {'BaseModel': BaseModel,
-               'User': User,
-               'State': State,
-               'City': City,
-               'Amenity': Amenity,
-               'Place': Place,
-               'Review': Review
-               }
 
     # Commands and their help information
     def do_quit(self, arg):
@@ -60,9 +51,10 @@ class HBNBCommand(cmd.Cmd):
         '''
         Create a class instance.
         '''
+        args = arg.split()
         if HBNBCommand.class_issue(arg):
             return
-        new_instance = HBNBCommand.classes[arg]()
+        new_instance = storage.classes()[args[0].title()]()
         new_instance.save()
         print(new_instance.id)
 
@@ -83,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) < 2:
             print("** instance id missing **")
             return
-        key = args[0] + "." + args[1]
+        key = args[0].title() + "." + args[1]
         if key not in storage.all():
             print("** no instance found **")
             return
@@ -96,7 +88,7 @@ class HBNBCommand(cmd.Cmd):
         print("Show an instance.")
         print("Usage: show <className> <objectId>")
 
-    def do_delete(self, arg):
+    def do_destroy(self, arg):
         '''
         Delete an instance of a class.
         '''
@@ -106,14 +98,14 @@ class HBNBCommand(cmd.Cmd):
         if len(args) < 2:
             print("** instance id missing **")
             return
-        key = args[0] + "." + args[1]
+        key = args[0].title() + "." + args[1]
         if key not in storage.all():
             print("** no instance found **")
             return
         del storage.all()[key]
         storage.save()
 
-    def help_delete(self):
+    def help_destroy(self):
         '''
         Help information for the delete command.
         '''
@@ -124,12 +116,18 @@ class HBNBCommand(cmd.Cmd):
         '''
         Print all instances of a class.
         '''
-        if HBNBCommand.class_issue(arg):
-            return
+        args = arg.split()
         objects = storage.all()
-        for key in objects:
-            if key.split(".")[0] == arg:
-                print(objects[key])
+        if not arg:
+            for _ in objects:
+                print(objects[_])
+        elif args[0].title() not in storage.classes():
+            print("** class doesn't exist **")
+            return
+        else:
+            for key in objects:
+                if key.split(".")[0] == args[0]:
+                    print(objects[key])
 
     def help_all(self):
         '''
@@ -150,11 +148,20 @@ class HBNBCommand(cmd.Cmd):
         '''
         if HBNBCommand.class_issue(arg):
             return
+
         args = arg.split()
+        if args[0].lower() == 'basemodel':
+            class_name = 'BaseModel'
+        else:
+            class_name = args[0].title()
+
+        attribute = args[2]
+        attr_val = args[3]
+
         if len(args) < 2:
             print("** instance id missing **")
             return
-        key = args[0] + "." + args[1]
+        key = class_name + "." + args[1]
         if key not in storage.all():
             print("** no instance found **")
             return
@@ -165,8 +172,8 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         objects = storage.all()
-        setattr(objects[key], args[2], args[3])
-        storage.save()
+        objects[key].__dict__[attribute] = storage.attributes()[class_name][attribute](attr_val)
+        objects[key].save()
 
     def help_update(self):
         '''
@@ -195,7 +202,7 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name missing **")
             return True
-        elif args[0] not in HBNBCommand.classes:
+        elif args[0].title() not in storage.classes():
             print("** class doesn't exist **")
             return True
         return False
