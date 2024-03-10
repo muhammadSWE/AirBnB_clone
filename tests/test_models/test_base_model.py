@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+'''
+Unit tests module for the BaseModel class
+'''
 import unittest
 from models.base_model import BaseModel
 from models import storage
