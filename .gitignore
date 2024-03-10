@@ -1,7 +1,7 @@
-*
+*.pyc
+*.json
 !*.py
 !models/
-!tests
 !AUTHORS
 !README.md
 !.gitignore
