@@ -10,6 +10,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from models import storage
+from shlex import split as shlex_split
 import cmd
 
 
@@ -51,10 +52,11 @@ class HBNBCommand(cmd.Cmd):
         '''
         Create a class instance.
         '''
-        args = arg.split()
-        if HBNBCommand.class_issue(arg):
+        args = HBNBCommand.get_args(arg)
+        if not args:
             return
-        new_instance = storage.classes()[args[0].title()]()
+
+        new_instance = storage.classes()[args[0]]()
         new_instance.save()
         print(new_instance.id)
 
@@ -69,13 +71,13 @@ class HBNBCommand(cmd.Cmd):
         '''
         Method to show an instance.
         '''
-        if HBNBCommand.class_issue(arg):
+        args = HBNBCommand.get_args(arg)
+        if not args:
             return
-        args = arg.split()
         if len(args) < 2:
             print("** instance id missing **")
             return
-        key = args[0].title() + "." + args[1]
+        key = args[0] + "." + args[1]
         if key not in storage.all():
             print("** no instance found **")
             return
@@ -92,13 +94,13 @@ class HBNBCommand(cmd.Cmd):
         '''
         Delete an instance of a class.
         '''
-        if HBNBCommand.class_issue(arg):
+        args = HBNBCommand.get_args(arg)
+        if not args:
             return
-        args = arg.split()
         if len(args) < 2:
             print("** instance id missing **")
             return
-        key = args[0].title() + "." + args[1]
+        key = args[0] + "." + args[1]
         if key not in storage.all():
             print("** no instance found **")
             return
@@ -118,16 +120,25 @@ class HBNBCommand(cmd.Cmd):
         '''
         args = arg.split()
         objects = storage.all()
+        instances = []
         if not arg:
             for _ in objects:
                 print(objects[_])
-        elif args[0].title() not in storage.classes():
+            return
+
+        if args[0].lower() == 'basemodel':
+            args[0] = 'BaseModel'
+        else:
+            args[0] = args[0].title()
+
+        if args[0] not in storage.classes():
             print("** class doesn't exist **")
             return
         else:
             for key in objects:
                 if key.split(".")[0] == args[0]:
-                    print(objects[key])
+                    instances.append(objects[key].__str__())
+            print(instances)
 
     def help_all(self):
         '''
@@ -146,22 +157,14 @@ class HBNBCommand(cmd.Cmd):
         '''
         Update an instance based on the class name and id.
         '''
-        if HBNBCommand.class_issue(arg):
+        args = HBNBCommand.get_args(arg)
+        if not args:
             return
-
-        args = arg.split()
-        if args[0].lower() == 'basemodel':
-            class_name = 'BaseModel'
-        else:
-            class_name = args[0].title()
-
-        attribute = args[2]
-        attr_val = args[3]
 
         if len(args) < 2:
             print("** instance id missing **")
             return
-        key = class_name + "." + args[1]
+        key = args[0] + "." + args[1]
         if key not in storage.all():
             print("** no instance found **")
             return
@@ -172,7 +175,10 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         objects = storage.all()
-        objects[key].__dict__[attribute] = storage.attributes()[class_name][attribute](attr_val)
+        if args[2] in storage.attributes()[args[0]]:
+            objects[key].__dict__[args[2]] = storage.attributes()[args[0]][args[2]](args[3])
+        else:
+            objects[key].__dict__[args[2]] = args[3]
         objects[key].save()
 
     def help_update(self):
@@ -194,18 +200,24 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     @staticmethod
-    def class_issue(arg):
+    def get_args(line):
         '''
         Checks if the class argument is valid.
+        Returns True if the class name is missing or if the class name
+        doesn't exist.
         '''
-        args = arg.split()
-        if not arg:
+        args = shlex_split(line)
+        if not args:
             print("** class name missing **")
-            return True
+            return
+        elif args[0].lower() == 'basemodel':
+            args[0] = 'BaseModel'
+            return args
         elif args[0].title() not in storage.classes():
             print("** class doesn't exist **")
-            return True
-        return False
+            return
+        args[0] = args[0].title()
+        return args
 
 
 if __name__ == '__main__':
