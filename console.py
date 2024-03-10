@@ -12,6 +12,7 @@ from models.review import Review
 from models import storage
 from shlex import split as shlex_split
 import cmd
+import re
 
 
 class HBNBCommand(cmd.Cmd):
@@ -219,6 +220,36 @@ class HBNBCommand(cmd.Cmd):
             return
         args[0] = args[0].title()
         return args
+
+    @classmethod
+    def commands(cls):
+        '''
+        Returns a dictionary of all available commands.
+        '''
+        available_commands = {}
+        for method in cls.__dict__:
+            if method.startswith("do_"):
+                available_commands[method[3:]] = cls.__dict__[method]
+        return available_commands
+
+    def default(self, arg):
+        '''
+        Uses regex to parse the input <classname>.<command> <arg1> <arg2> ...
+        or prints an error message if the command is not valid.
+        '''
+        match = re.match(r"(\w+)\.(\w+)(?:\(([^)]*)\))?", arg)
+        if match is not None:
+            command = match.group(2)
+            if command in HBNBCommand.commands():
+                class_name = match.group(1)
+                args = match.group(3)
+                if args is not None:
+                    arg_line = " ".join((class_name, args))
+                else:
+                    arg_line = class_name
+                HBNBCommand.commands()[command](self, arg_line)
+                return
+        print("*** Unknown syntax: {}".format(arg))
 
 
 if __name__ == '__main__':
