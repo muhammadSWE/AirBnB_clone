@@ -263,7 +263,7 @@ class HBNBCommand(cmd.Cmd):
             command = match.group(2)
             if command in HBNBCommand.commands():
                 class_name = match.group(1)
-                args = match.group(3)
+                args = match.group(3).replace(', ', ' ')
                 if args is not None:
                     arg_line = " ".join((class_name, args))
                 else:
