@@ -176,7 +176,8 @@ class HBNBCommand(cmd.Cmd):
             return
         objects = storage.all()
         if args[2] in storage.attributes()[args[0]]:
-            objects[key].__dict__[args[2]] = storage.attributes()[args[0]][args[2]](args[3])
+            objects[key].__dict__[args[2]] =\
+                storage.attributes()[args[0]][args[2]](args[3])
         else:
             objects[key].__dict__[args[2]] = args[3]
         objects[key].save()
