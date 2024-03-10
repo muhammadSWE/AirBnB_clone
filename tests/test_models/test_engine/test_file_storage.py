@@ -63,6 +63,13 @@ class TestFileStorage(unittest.TestCase):
         # Call reload
         storage.reload()
         self.assertIn("BaseModel.12345", storage.all())
+    
+    def test_docs(self):
+        """Test docstrings"""
+        self.assertIsNotNone(FileStorage.all)
+        self.assertIsNotNone(FileStorage.new)
+        self.assertIsNotNone(FileStorage.save)
+        self.assertIsNotNone(FileStorage.reload)
 
 
 if __name__ == "__main__":
