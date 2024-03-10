@@ -194,6 +194,27 @@ class HBNBCommand(cmd.Cmd):
               "instance with id <id> of <className> "
               "to <attributeValue>")
 
+    def do_count(self, arg):
+        '''
+        Retrieve the number of instances of a class.
+        '''
+        args = HBNBCommand.get_args(arg)
+        if not args:
+            return
+        instances = storage.all()
+        count = 0
+        for key in instances:
+            if key.split(".")[0] == args[0]:
+                count += 1
+        print(count)
+
+    def help_count(self):
+        '''
+        Help information for the count command.
+        '''
+        print("Retrieve the number of instances of a class.\n"
+              "Usage: count <className>")
+
     # Non-command methods
     def emptyline(self):
         '''
