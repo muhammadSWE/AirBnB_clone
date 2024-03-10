@@ -2,12 +2,10 @@
 '''
 Unit tests module for the Review class
 '''
-import sys
-sys.path.append('/home/danielkamel/AirBnB_clone')
-
 import unittest
 from models.base_model import BaseModel
 from models.review import Review
+
 
 class TestReview(unittest.TestCase):
     '''
@@ -58,6 +56,7 @@ class TestReview(unittest.TestCase):
         self.assertTrue(hasattr(self.review, "text"))
         self.assertEqual(self.review.text, "")
         self.assertIsInstance(self.review.text, str)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,7 @@ import unittest
 from models.base_model import BaseModel
 from models.place import Place
 
+
 class TestPlace(unittest.TestCase):
     '''
     Unit tests for the Place class
@@ -127,6 +128,7 @@ class TestPlace(unittest.TestCase):
         self.assertTrue(hasattr(self.place, "amenity_ids"))
         self.assertEqual(self.place.amenity_ids, [])
         self.assertIsInstance(self.place.amenity_ids, list)
+
 
 if __name__ == "__main__":
     unittest.main()
