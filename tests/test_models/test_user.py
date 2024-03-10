@@ -3,6 +3,7 @@ import unittest
 from models.user import User
 from models.base_model import BaseModel
 
+
 class TestUser(unittest.TestCase):
     """ Unit tests for the User class """
 
@@ -34,6 +35,7 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(user.password, str)
         self.assertIsInstance(user.first_name, str)
         self.assertIsInstance(user.last_name, str)
+
 
 if __name__ == "__main__":
     unittest.main()
